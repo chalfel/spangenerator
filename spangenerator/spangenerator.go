@@ -1,4 +1,4 @@
-package span
+package spangenerator
 
 import (
 	"context"
@@ -130,5 +130,18 @@ func hasImport(file *ast.File, pkg string) bool {
 			return true
 		}
 	}
-	return false
+
+	// If there are no functions that need span injection, return true to indicate no import is needed
+	hasFunctionToInject := false
+	ast.Inspect(file, func(n ast.Node) bool {
+		if fn, ok := n.(*ast.FuncDecl); ok {
+			if fn.Body != nil && !strings.HasPrefix(fn.Name.Name, "init") {
+				hasFunctionToInject = true
+				return false // No need to continue inspecting
+			}
+		}
+		return true
+	})
+
+	return !hasFunctionToInject
 }

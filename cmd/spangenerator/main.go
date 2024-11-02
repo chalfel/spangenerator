@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/chalfel/spangenerator/span"
+	"github.com/chalfel/spangenerator/spangenerator"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// Call the library function
-	err := span.InjectSpans(*root, *tracerName)
+	err := spangenerator.InjectSpans(*root, *tracerName)
 	if err != nil {
 		log.Fatal(err)
 	}
