@@ -142,7 +142,7 @@ func hasImport(file *ast.File, pkg string) bool {
 	hasFunctionToInject := false
 	ast.Inspect(file, func(n ast.Node) bool {
 		if fn, ok := n.(*ast.FuncDecl); ok {
-			if fn.Body != nil && !strings.HasPrefix(fn.Name.Name, "init") {
+			if fn.Body != nil && !strings.HasPrefix(fn.Name.Name, "init") && hasContextParameter(fn) {
 				hasFunctionToInject = true
 				return false // No need to continue inspecting
 			}
