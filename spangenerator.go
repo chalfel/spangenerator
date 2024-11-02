@@ -10,7 +10,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strings"
 
@@ -27,17 +26,31 @@ func StartSpanFromContext(ctx context.Context, tracer trace.Tracer, receiver int
 	// Extract just the function name
 	funcName := fullFuncName[strings.LastIndex(fullFuncName, ".")+1:]
 
-	// Get the struct name if it's a method call on a struct
-	structName := ""
-	if receiver != nil {
-		structName = reflect.TypeOf(receiver).Elem().Name()
+	if strings.Contains(fullFuncName, ")") {
+		// This is a method call on a struct, extract receiver info
+		leftParen := strings.LastIndex(fullFuncName, "(")
+		rightParen := strings.LastIndex(fullFuncName, ")")
+
+		if leftParen != -1 && rightParen != -1 {
+			receiverType := fullFuncName[leftParen+1 : rightParen]
+			structName := ""
+
+			// Use reflection to strip pointer symbol if present
+			if strings.HasPrefix(receiverType, "*") {
+				structName = receiverType[1:]
+			} else {
+				structName = receiverType
+			}
+
+			// Combine struct and function name
+			spanName := structName + "." + funcName
+			return tracer.Start(ctx, spanName)
+		}
 	}
 
-	// Create a combined name for the span
-	spanName := structName + "." + funcName
+	// If not a method on a struct, just use the function name
+	return tracer.Start(ctx, funcName)
 
-	// Start the span with the combined name
-	return tracer.Start(ctx, spanName)
 }
 
 // InjectSpans walks through all .go files in the specified root directory

@@ -2,7 +2,6 @@ package trace
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -41,7 +40,6 @@ func New(opts TracerOpts) *Tracer {
 
 	secureOption := otlptracegrpc.WithInsecure()
 
-	fmt.Println(opts.CollectorUrl)
 	exporter, err := otlptrace.New(
 		context.Background(),
 		otlptracegrpc.NewClient(
