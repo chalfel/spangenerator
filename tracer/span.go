@@ -8,7 +8,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func WithSpan(ctx context.Context, fn func(ctx context.Context, span trace.Span) (any, error)) (any, error) {
+func WithSpan[Response comparable](ctx context.Context, fn func(ctx context.Context, span trace.Span) (Response, error)) (Response, error) {
 	tracer := otel.GetTracerProvider()
 	if tracer == nil {
 		return fn(ctx, nil)
