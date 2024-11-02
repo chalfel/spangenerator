@@ -13,13 +13,19 @@ import (
 	"runtime"
 	"strings"
 
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
 // StartSpanFromContext is the function to be injected for tracing purposes.
-func StartSpanFromContext(ctx context.Context, tracer trace.Tracer, receiver interface{}) (context.Context, trace.Span) {
+func StartSpanFromContext(ctx context.Context) (context.Context, trace.Span) {
 	// Get the caller's function name
+	if os.Getenv("OTEL_SERVICE_NAME") != "" {
+		return ctx, nil
+	}
+
+	tracer := otel.GetTracerProvider().Tracer("default")
 	pc, _, _, _ := runtime.Caller(1)
 	fullFuncName := runtime.FuncForPC(pc).Name()
 
@@ -50,7 +56,6 @@ func StartSpanFromContext(ctx context.Context, tracer trace.Tracer, receiver int
 
 	// If not a method on a struct, just use the function name
 	return tracer.Start(ctx, funcName)
-
 }
 
 // InjectSpans walks through all .go files in the specified root directory
