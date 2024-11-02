@@ -15,7 +15,7 @@ func WithSpan[Response comparable](ctx context.Context, fn func(ctx context.Cont
 	}
 	pc, _, _, _ := runtime.Caller(1)
 	fullFuncName := runtime.FuncForPC(pc).Name()
-	ctx, span := tracer.Tracer(GlobalTracer.opts.Name).Start(ctx, fullFuncName)
+	ctx, span := tracer.Tracer("default").Start(ctx, fullFuncName)
 
 	defer span.End()
 
