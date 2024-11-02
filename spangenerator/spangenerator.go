@@ -50,7 +50,7 @@ func InjectSpans(root string, tracerName string) error {
 		}
 
 		// Process only Go source files, skipping test files if desired
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(info.Name(), "_test.go") {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(info.Name(), "_test.go") && info.Name() != "main.go" {
 			if err := processFile(path, tracerName); err != nil {
 				log.Printf("Failed to process file %s: %v", path, err)
 			}
@@ -100,8 +100,8 @@ func processFile(filename string, tracerName string) error {
 	})
 
 	// Ensure the import statement for the tracing function is added
-	if !hasImport(file, "github.com/chalfel/spangenerator") {
-		astutil.AddImport(fset, file, "github.com/chalfel/spangenerator")
+	if !hasImport(file, "github.com/chalfel/spangenerator/spangenerator") {
+		astutil.AddImport(fset, file, "github.com/chalfel/spangenerator/spangenerator")
 	}
 
 	if !hasImport(file, "go.opentelemetry.io/otel") {
