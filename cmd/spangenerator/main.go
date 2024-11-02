@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/chalfel/spangenerator"
+	_ "go.opentelemetry.io/otel"
 )
 
 func main() {
