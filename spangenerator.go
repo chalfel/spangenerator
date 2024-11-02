@@ -81,7 +81,7 @@ func processFile(filename string, tracerName string) error {
 						ast.NewIdent("ctx"),
 						ast.NewIdent("_"),
 					},
-					Tok: token.DEFINE,
+					Tok: token.ASSIGN,
 					Rhs: []ast.Expr{
 						&ast.CallExpr{
 							Fun: &ast.SelectorExpr{
