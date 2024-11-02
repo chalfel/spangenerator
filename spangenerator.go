@@ -76,18 +76,25 @@ func processFile(filename string, tracerName string) error {
 		if fn, ok := n.(*ast.FuncDecl); ok {
 			if fn.Body != nil && hasContextParameter(fn) && !strings.HasPrefix(fn.Name.Name, "init") {
 				// Create new tracing logic to add at the start of the function
-				tracingStmt := &ast.ExprStmt{
-					X: &ast.CallExpr{
-						Fun: &ast.SelectorExpr{
-							X:   ast.NewIdent("spangenerator"),
-							Sel: ast.NewIdent("StartSpanFromContext"),
-						},
-						Args: []ast.Expr{
-							ast.NewIdent("ctx"),
-							ast.NewIdent(fmt.Sprintf(`otel.Tracer("%s")`, tracerName)),
-							&ast.BasicLit{
-								Kind:  token.STRING,
-								Value: `"` + fn.Name.Name + `"`,
+				tracingStmt := &ast.AssignStmt{
+					Lhs: []ast.Expr{
+						ast.NewIdent("ctx"),
+						ast.NewIdent("_"),
+					},
+					Tok: token.DEFINE,
+					Rhs: []ast.Expr{
+						&ast.CallExpr{
+							Fun: &ast.SelectorExpr{
+								X:   ast.NewIdent("spangenerator"),
+								Sel: ast.NewIdent("StartSpanFromContext"),
+							},
+							Args: []ast.Expr{
+								ast.NewIdent("ctx"),
+								ast.NewIdent(fmt.Sprintf(`otel.Tracer("%s")`, tracerName)),
+								&ast.BasicLit{
+									Kind:  token.STRING,
+									Value: `"` + fn.Name.Name + `"`,
+								},
 							},
 						},
 					},
