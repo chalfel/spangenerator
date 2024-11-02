@@ -104,8 +104,8 @@ func processFile(filename string, tracerName string) error {
 		astutil.AddImport(fset, file, "github.com/chalfel/spangenerator")
 	}
 
-	if !hasImport(file, "go.opentelemetry.io/otel/trace") {
-		astutil.AddImport(fset, file, "go.opentelemetry.io/otel/trace")
+	if !hasImport(file, "go.opentelemetry.io/otel") {
+		astutil.AddImport(fset, file, "go.opentelemetry.io/otel")
 	}
 
 	// Write the modified file back
