@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -89,8 +90,8 @@ func processFile(filename string) error {
 	})
 
 	// Ensure the import statement for the tracing function is added
-	if !hasImport(file, "github.com/yourusername/spangenerator") {
-		astutil.AddImport(fset, file, "github.com/yourusername/spangenerator")
+	if !hasImport(file, "github.com/chalfel/spangenerator") {
+		astutil.AddImport(fset, file, "github.com/chalfel/spangenerator")
 	}
 
 	// Write the modified file back
@@ -119,7 +120,16 @@ func hasImport(file *ast.File, pkg string) bool {
 }
 
 func main() {
-	err := InjectSpans(".")
+	root := flag.String("root", ".", "Root directory to apply span injection")
+	flag.Parse()
+
+	if root == nil || *root == "" {
+		log.Fatal("Root directory is required")
+		return
+	}
+
+	// Call the library function
+	err := InjectSpans(*root)
 	if err != nil {
 		log.Fatal(err)
 	}
