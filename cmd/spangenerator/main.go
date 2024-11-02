@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/chalfel/spangenerator/spangenerator"
+	"github.com/chalfel/spangenerator"
 )
 
 func main() {

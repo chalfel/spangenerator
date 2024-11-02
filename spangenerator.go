@@ -74,7 +74,7 @@ func processFile(filename string, tracerName string) error {
 	ast.Inspect(file, func(n ast.Node) bool {
 		// Find function declarations
 		if fn, ok := n.(*ast.FuncDecl); ok {
-			if fn.Body != nil && !strings.HasPrefix(fn.Name.Name, "init") {
+			if fn.Body != nil && hasContextParameter(fn) && !strings.HasPrefix(fn.Name.Name, "init") {
 				// Create new tracing logic to add at the start of the function
 				tracingStmt := &ast.ExprStmt{
 					X: &ast.CallExpr{
@@ -144,4 +144,17 @@ func hasImport(file *ast.File, pkg string) bool {
 	})
 
 	return !hasFunctionToInject
+}
+
+func hasContextParameter(fn *ast.FuncDecl) bool {
+	for _, param := range fn.Type.Params.List {
+		if selectorExpr, ok := param.Type.(*ast.SelectorExpr); ok {
+			if ident, ok := selectorExpr.X.(*ast.Ident); ok && ident.Name == "context" {
+				if selectorExpr.Sel.Name == "Context" {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
