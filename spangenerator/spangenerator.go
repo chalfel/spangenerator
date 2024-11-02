@@ -79,7 +79,7 @@ func processFile(filename string, tracerName string) error {
 				tracingStmt := &ast.ExprStmt{
 					X: &ast.CallExpr{
 						Fun: &ast.SelectorExpr{
-							X:   ast.NewIdent("span"),
+							X:   ast.NewIdent("spangenerator"),
 							Sel: ast.NewIdent("StartSpanFromContext"),
 						},
 						Args: []ast.Expr{
