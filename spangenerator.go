@@ -100,8 +100,8 @@ func processFile(filename string, tracerName string) error {
 	})
 
 	// Ensure the import statement for the tracing function is added
-	if !hasImport(file, "github.com/chalfel/spangenerator/spangenerator") {
-		astutil.AddImport(fset, file, "github.com/chalfel/spangenerator/spangenerator")
+	if !hasImport(file, "github.com/chalfel/spangenerator") {
+		astutil.AddImport(fset, file, "github.com/chalfel/spangenerator")
 	}
 
 	if !hasImport(file, "go.opentelemetry.io/otel") {
