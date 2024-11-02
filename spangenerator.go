@@ -79,9 +79,9 @@ func processFile(filename string, tracerName string) error {
 				tracingStmt := &ast.AssignStmt{
 					Lhs: []ast.Expr{
 						ast.NewIdent("ctx"),
-						ast.NewIdent("_"),
+						ast.NewIdent("span"),
 					},
-					Tok: token.ASSIGN,
+					Tok: token.DEFINE,
 					Rhs: []ast.Expr{
 						&ast.CallExpr{
 							Fun: &ast.SelectorExpr{
@@ -99,8 +99,17 @@ func processFile(filename string, tracerName string) error {
 						},
 					},
 				}
+				deferStmt := &ast.DeferStmt{
+					Call: &ast.CallExpr{
+						Fun: &ast.SelectorExpr{
+							X:   ast.NewIdent("span"),
+							Sel: ast.NewIdent("End"),
+						},
+					},
+				}
+
 				// Insert the tracing logic at the beginning of the function body
-				fn.Body.List = append([]ast.Stmt{tracingStmt}, fn.Body.List...)
+				fn.Body.List = append([]ast.Stmt{tracingStmt, deferStmt}, fn.Body.List...)
 			}
 		}
 		return true
